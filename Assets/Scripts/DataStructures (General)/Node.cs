@@ -3,8 +3,10 @@
 public class Node : MonoBehaviour
 {
     // Hold references for previous and next nodes.
-    public GameObject prevNode { set; get; }
-    public GameObject nextNode { set; get; }
+    public GameObject prevNode;
+    public GameObject nextNode;
+    public int nodeIndex;
+    public int nodeValue;
 
     // Hold the positional information of the current game object.
     public float xPos = 0.0f;
@@ -18,6 +20,7 @@ public class Node : MonoBehaviour
     {
         prevNode = null;
         nextNode = null;
+        nodeValue = 0;
     }
 
     /// <summary>
@@ -28,5 +31,18 @@ public class Node : MonoBehaviour
         xPos = transform.position.x;
         yPos = transform.position.y;
         zPos = transform.position.z;
+    }
+
+    public Vector3 GetNodePosition()
+    {
+        return new Vector3(xPos, yPos, zPos);
+    }
+
+    /// <summary>
+    /// Update the name of the node to be the same as its value.
+    /// </summary>
+    public void UpdateName()
+    {
+        transform.name = nodeValue.ToString();
     }
 }

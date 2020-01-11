@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Queue : MonoBehaviour
 {
-    public int count { get; set; }
-    public int totalNodesCreated { get; set; }
-    public GameObject head { get; set; }
-    public GameObject tail { get; set; }
+    public int count;
+    public int totalNodesCreated;
+    public GameObject head;
+    public GameObject tail;
     public GameObject prefab;
 
 
@@ -29,12 +27,11 @@ public class Queue : MonoBehaviour
     public void push(Vector3 newHeadPosition)
     {
         GameObject newHead = Instantiate(prefab, newHeadPosition, Quaternion.identity);
+        newHead.transform.parent = this.transform;
         newHead.GetComponent<Node>().UpdatePositions();
 
         if (head != null)
         {
-            GameObject nodeReference = head;
-
             tail.GetComponent<Node>().nextNode = newHead;
             newHead.GetComponent<Node>().prevNode = tail;
             tail = newHead;

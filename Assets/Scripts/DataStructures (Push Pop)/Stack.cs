@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Stack : MonoBehaviour
 {
-    public int count { get; set; }
-    public GameObject head { get; set; }
+    public int count;
+    public GameObject head;
     public GameObject prefab;
 
 
@@ -27,6 +25,7 @@ public class Stack : MonoBehaviour
     public void push(Vector3 newHeadPosition)
     {
         GameObject newHead = Instantiate(prefab, newHeadPosition, Quaternion.identity);
+        newHead.transform.parent = this.transform;
         newHead.GetComponent<Node>().UpdatePositions();
 
         if (head != null)

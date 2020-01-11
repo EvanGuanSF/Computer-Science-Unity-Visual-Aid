@@ -31,7 +31,7 @@ public class StackDemo : MonoBehaviour
 
 
             GameObject toDelete = theStack.pop();
-            if(toDelete != null)
+            if (toDelete != null)
             {
                 Destroy(toDelete);
             }

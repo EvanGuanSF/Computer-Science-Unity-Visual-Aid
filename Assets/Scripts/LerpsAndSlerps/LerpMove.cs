@@ -7,7 +7,6 @@ public class LerpMove : MonoBehaviour
     public float endX = 0.0f;
     public static float lerpSpeed = 5.0f;
 
-
     private float lerpDistance;
     private float lerpStartTime;
 
@@ -24,7 +23,6 @@ public class LerpMove : MonoBehaviour
 
     void FixedUpdate()
     {
-
         // Distance moved equals elapsed time times speed..
         float distCovered = (Time.time - lerpStartTime) * lerpSpeed;
 
