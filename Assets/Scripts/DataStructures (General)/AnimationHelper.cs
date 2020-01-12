@@ -2,7 +2,8 @@
 
 public class AnimationHelper : MonoBehaviour
 {
-    public float lerpSpeed = 3.0f;
+    public float baseLerpSpeed = 3.0f;
+    private float normalizedLerpSpeed;
     private bool isAnimatingSwap = false;
     private bool isMovingAwayFromVertical = false, isMovingToFinalHorizontal = false, isMovingTowardVertical = false;
     private float lerpDistance;
@@ -39,16 +40,18 @@ public class AnimationHelper : MonoBehaviour
         nodeTwoInitialPosition = new Vector3(nodeTwo.transform.position.x, nodeTwo.transform.position.y, nodeTwo.transform.position.z);
 
         // Calculate the distance between the objects that will be lerped.
-        lerpDistance = (nodeOneInitialPosition - nodeTwoInitialPosition).magnitude;
-
-        isMovingAwayFromVertical = true;
-        isAnimatingSwap = true;
+        // Update the lerp speed to normalize.
+        lerpDistance = (nodeOneInitialPosition - nodeOneTempPositionOne).magnitude;
+        normalizedLerpSpeed = lerpDistance * baseLerpSpeed;
 
         // Set the positions of the checkpoints that will be used.
         nodeOneTempPositionOne = new Vector3(nodeOneInitialPosition.x, nodeOneInitialPosition.y + 2, nodeOneInitialPosition.z);
         nodeTwoTempPositionOne = new Vector3(nodeTwoInitialPosition.x, nodeTwoInitialPosition.y - 2, nodeTwoInitialPosition.z);
         nodeOneTempPositionTwo = new Vector3(nodeTwoInitialPosition.x, nodeOneTempPositionOne.y, nodeOneTempPositionOne.z);
         nodeTwoTempPositionTwo = new Vector3(nodeOneInitialPosition.x, nodeTwoTempPositionOne.y, nodeTwoTempPositionOne.z);
+
+        isMovingAwayFromVertical = true;
+        isAnimatingSwap = true;
     }
 
     /// <summary>
@@ -61,7 +64,7 @@ public class AnimationHelper : MonoBehaviour
             if (isMovingAwayFromVertical)
             {
                 // Distance moved equals elapsed time times speed..
-                float distCovered = (Time.time - lerpStartTime) * lerpSpeed;
+                float distCovered = (Time.time - lerpStartTime) * normalizedLerpSpeed;
 
                 // Fraction of journey completed equals current distance divided by total distance.
                 float fractionOfJourney = distCovered / lerpDistance;
@@ -82,15 +85,25 @@ public class AnimationHelper : MonoBehaviour
                 }
                 else
                 {
+                    lerpStartTime = Time.time;
+
+                    // Calculate the distance between the objects that will be lerped.
+                    // Update the lerp speed to normalize.
+                    lerpDistance = (nodeOneTempPositionOne - nodeOneTempPositionTwo).magnitude;
+                    normalizedLerpSpeed = lerpDistance * baseLerpSpeed;
+
+                    // Manually move nodes to final positions to account for any timing deviations.
+                    nodeOne.transform.position = nodeOneTempPositionOne;
+                    nodeTwo.transform.position = nodeTwoTempPositionOne;
+
                     isMovingToFinalHorizontal = true;
                     isMovingAwayFromVertical = false;
-                    lerpStartTime = Time.time;
                 }
             }
             else if (isMovingToFinalHorizontal)
             {
                 // Distance moved equals elapsed time times speed..
-                float distCovered = (Time.time - lerpStartTime) * lerpSpeed;
+                float distCovered = (Time.time - lerpStartTime) * normalizedLerpSpeed;
 
                 // Fraction of journey completed equals current distance divided by total distance.
                 float fractionOfJourney = distCovered / lerpDistance;
@@ -111,15 +124,25 @@ public class AnimationHelper : MonoBehaviour
                 }
                 else
                 {
+                    lerpStartTime = Time.time;
+
+                    // Calculate the distance between the objects that will be lerped.
+                    // Update the lerp speed to normalize.
+                    lerpDistance = (nodeOneTempPositionTwo - nodeTwoInitialPosition).magnitude;
+                    normalizedLerpSpeed = lerpDistance * baseLerpSpeed;
+
+                    // Manually move nodes to final positions to account for any timing deviations.
+                    nodeOne.transform.position = nodeOneTempPositionTwo;
+                    nodeTwo.transform.position = nodeTwoTempPositionTwo;
+
                     isMovingTowardVertical = true;
                     isMovingToFinalHorizontal = false;
-                    lerpStartTime = Time.time;
                 }
             }
             else if (isMovingTowardVertical)
             {
                 // Distance moved equals elapsed time times speed..
-                float distCovered = (Time.time - lerpStartTime) * lerpSpeed;
+                float distCovered = (Time.time - lerpStartTime) * normalizedLerpSpeed;
 
                 // Fraction of journey completed equals current distance divided by total distance.
                 float fractionOfJourney = distCovered / lerpDistance;
@@ -140,14 +163,19 @@ public class AnimationHelper : MonoBehaviour
                 }
                 else
                 {
-                    isMovingTowardVertical = false;
                     lerpStartTime = Time.time;
+
+                    // Manually move nodes to final positions to account for any timing deviations.
+                    nodeOne.transform.position = nodeTwoInitialPosition;
+                    nodeTwo.transform.position = nodeOneInitialPosition;
+
+                    isMovingTowardVertical = false;
                 }
             }
             else
             {
                 //Debug.Log("Done animating lerp.");
-                // Flag and set variables to stop lerping.
+                // Flag and reset variables when we finish lerping.
                 isAnimatingSwap = false;
                 nodeOne = nodeTwo = null;
                 isMovingAwayFromVertical = isMovingToFinalHorizontal = isMovingTowardVertical = false;
