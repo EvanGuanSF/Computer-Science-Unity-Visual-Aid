@@ -64,12 +64,17 @@ public class NodeList : MonoBehaviour
 
     public void Print()
     {
+        Debug.Log(this.ToString());
+    }
+
+    public override string ToString()
+    {
         string output = "";
 
         if (head == null)
         {
             Debug.Log("No elements in NodeList.");
-            return;
+            return "";
         }
 
         for (int i = 0; i < count; i++)
@@ -77,7 +82,9 @@ public class NodeList : MonoBehaviour
             output += ValueAtIndex(i) + " ";
         }
 
-        Debug.Log(output.Trim());
+        output.Trim();
+
+        return output;
     }
 
     /// <summary>

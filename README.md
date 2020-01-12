@@ -15,4 +15,4 @@ Basic sorts demo uses inputs:
 
 TODO (Updated Jan 11, 2020):
 - Upgrade to a newer version of Unity to utilize more up-to-date GUI features to add proper in-simulation text and value updates.
-- Add textures to to nodes being sorted to indicate comparisons happening in the background. (Change texture and yield while comparing?).
+- Add legend for Node textures.

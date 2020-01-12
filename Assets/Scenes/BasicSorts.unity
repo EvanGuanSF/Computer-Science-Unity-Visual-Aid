@@ -121,9 +121,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1048717786}
+  - component: {fileID: 1048717783}
   - component: {fileID: 1048717785}
   - component: {fileID: 1048717784}
-  - component: {fileID: 1048717783}
   - component: {fileID: 1048717782}
   m_Layer: 0
   m_Name: BubbleSort
@@ -162,6 +162,12 @@ MonoBehaviour:
   isCoroutineIsActive: 0
   isReadyForInput: 0
   canExecuteStep: 0
+  materials:
+  - {fileID: 2100000, guid: ee821c104f43750479c5beb0d1b2fdf4, type: 2}
+  - {fileID: 2100000, guid: 302691f3f79bb2a4e848f3a44ae9149b, type: 2}
+  - {fileID: 2100000, guid: 3dcb51df425b7474bbf0580c9b0cd04f, type: 2}
+  - {fileID: 2100000, guid: 00c9fd90d4340544ab8646316a7e4f2a, type: 2}
+  timeBetweenComparisons: 0.25
 --- !u!114 &1048717784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,7 +192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   head: {fileID: 0}
-  prefab: {fileID: 1791527736139212, guid: 9630ed4acf471e54796aee39eac72474, type: 2}
+  prefab: {fileID: 1656434745655952, guid: 9630ed4acf471e54796aee39eac72474, type: 2}
   animationHelper: {fileID: 1048717784}
 --- !u!4 &1048717786
 Transform:
@@ -308,7 +314,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0.5882353}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -359,6 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0dd8bca44f5fb24e8c7e2c390e23586, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enableWireframe: 0
 --- !u!1 &2141901765
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,7 +384,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2141901766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -395,6 +402,13 @@ MonoBehaviour:
   isCoroutineIsActive: 0
   isReadyForInput: 0
   canExecuteStep: 0
+  materials:
+  - {fileID: 2100000, guid: ee821c104f43750479c5beb0d1b2fdf4, type: 2}
+  - {fileID: 2100000, guid: 302691f3f79bb2a4e848f3a44ae9149b, type: 2}
+  - {fileID: 2100000, guid: 3dcb51df425b7474bbf0580c9b0cd04f, type: 2}
+  - {fileID: 2100000, guid: 00c9fd90d4340544ab8646316a7e4f2a, type: 2}
+  - {fileID: 2100000, guid: 601ba65fa7a452e49a672e07c43b4379, type: 2}
+  timeBetweenComparisons: 0.25
 --- !u!4 &2141901767
 Transform:
   m_ObjectHideFlags: 0
@@ -420,7 +434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   head: {fileID: 0}
-  prefab: {fileID: 1791527736139212, guid: 9630ed4acf471e54796aee39eac72474, type: 2}
+  prefab: {fileID: 1656434745655952, guid: 9630ed4acf471e54796aee39eac72474, type: 2}
   animationHelper: {fileID: 2141901769}
 --- !u!114 &2141901769
 MonoBehaviour:

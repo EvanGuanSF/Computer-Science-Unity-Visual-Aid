@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WireframeCamera : MonoBehaviour {
+    public bool enableWireframe = true;
     void OnPreRender()
     {
-        GL.wireframe = true;
+        if(enableWireframe)
+        {
+            GL.wireframe = true;
+        }
     }
 
     void OnPostRender()
     {
-        GL.wireframe = false;
+        if (enableWireframe)
+        {
+            GL.wireframe = false;
+        }
     }
 }
