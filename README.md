@@ -8,10 +8,10 @@
  - 'S', 'DownArrow' and 'RightMouseButton' to pop the stack/queue simultaneously
  
  Basic sorts demo uses inputs:
- - 'Space' and 'LeftMouseButton' to execute the next swap in the loop
+ - 'Space' and 'LeftMouseButton' to execute the next swap in the algorithm
  
  
  
  TODO (Updated Jan 11, 2020):
  - Upgrade to a newer version of Unity to utilize more up-to-date GUI features to add proper in-simulation text and value updates.
- - Add bubble sort.
+ - Add textures to to nodes being sorted to indicate comparisons happening in the background. (Change texture and yield while comparing?).
