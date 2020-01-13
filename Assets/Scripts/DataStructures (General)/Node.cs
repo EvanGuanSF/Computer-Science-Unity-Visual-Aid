@@ -3,10 +3,14 @@
 public class Node : MonoBehaviour
 {
     // Hold references for previous and next nodes.
+    [Header("Node References")]
     public GameObject prevNode;
     public GameObject nextNode;
+
+    [Header("Node Properties")]
     public int nodeIndex;
     public int nodeValue;
+    private TextMesh valueText = null;
 
     // Hold the positional information of the current game object.
     public float xPos = 0.0f;
@@ -44,5 +48,14 @@ public class Node : MonoBehaviour
     public void UpdateName()
     {
         transform.name = nodeValue.ToString();
+        try
+        {
+            valueText = gameObject.GetComponentInChildren<TextMesh>();
+            valueText.text = nodeValue.ToString();
+        }
+        catch
+        {
+            valueText = null;
+        }
     }
 }

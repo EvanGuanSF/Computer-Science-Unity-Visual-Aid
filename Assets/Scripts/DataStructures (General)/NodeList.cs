@@ -2,13 +2,16 @@
 
 public class NodeList : MonoBehaviour
 {
+    public GameObject nodePrefab;
+    public AnimationHelper animationHelper;
+
     private int count;
-    public GameObject head;
-    private GameObject tail;
-    public GameObject prefab;
     private int[] nodeValues;
     private float startingYCoord;
-    public AnimationHelper animationHelper;
+    private TextMesh nodeListName = null;
+
+    private GameObject head;
+    private GameObject tail;
 
     void Start()
     {
@@ -31,7 +34,7 @@ public class NodeList : MonoBehaviour
         for (int nodesCreated = 0; nodesCreated < count; nodesCreated++)
         {
             newHeadPosition = new Vector3(2 * nodesCreated, startingYCoord, 0);
-            GameObject newNode = Instantiate(prefab, newHeadPosition, Quaternion.identity);
+            GameObject newNode = Instantiate(nodePrefab, newHeadPosition, Quaternion.identity);
             newNode.transform.parent = this.transform;
             newNode.GetComponent<Node>().UpdatePositions();
             newNode.GetComponent<Node>().nodeIndex = nodesCreated;
@@ -50,6 +53,17 @@ public class NodeList : MonoBehaviour
             tail.GetComponent<Node>().nextNode = newNode;
             newNode.GetComponent<Node>().prevNode = tail;
             tail = newNode;
+        }
+
+        // Handle the position of the title of the list if needed.
+        try
+        {
+            nodeListName = gameObject.GetComponentInChildren<TextMesh>();
+            nodeListName.transform.position = new Vector3(count, startingYCoord + 3f, 0.0f);
+        }
+        catch
+        {
+            nodeListName = null;
         }
     }
 
@@ -216,9 +230,19 @@ public class NodeList : MonoBehaviour
         {
             head = nodeOne;
         }
-        if (nodeTwo.GetComponent<Node>().nodeIndex == 0)
+        else if (nodeTwo.GetComponent<Node>().nodeIndex == 0)
         {
             head = nodeTwo;
+        }
+
+        // Update tail if needed.
+        if (nodeOne.GetComponent<Node>().nodeIndex == count - 1 || count == 1)
+        {
+            tail = nodeOne;
+        }
+        else if (nodeTwo.GetComponent<Node>().nodeIndex == count - 1 || count == 1)
+        {
+            tail = nodeTwo;
         }
 
         return true;

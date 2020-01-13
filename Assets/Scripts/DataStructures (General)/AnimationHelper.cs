@@ -45,8 +45,8 @@ public class AnimationHelper : MonoBehaviour
         normalizedLerpSpeed = lerpDistance * baseLerpSpeed;
 
         // Set the positions of the checkpoints that will be used.
-        nodeOneTempPositionOne = new Vector3(nodeOneInitialPosition.x, nodeOneInitialPosition.y + 2, nodeOneInitialPosition.z);
-        nodeTwoTempPositionOne = new Vector3(nodeTwoInitialPosition.x, nodeTwoInitialPosition.y - 2, nodeTwoInitialPosition.z);
+        nodeOneTempPositionOne = new Vector3(nodeOneInitialPosition.x, nodeOneInitialPosition.y + 1.25f, nodeOneInitialPosition.z);
+        nodeTwoTempPositionOne = new Vector3(nodeTwoInitialPosition.x, nodeTwoInitialPosition.y - 1.25f, nodeTwoInitialPosition.z);
         nodeOneTempPositionTwo = new Vector3(nodeTwoInitialPosition.x, nodeOneTempPositionOne.y, nodeOneTempPositionOne.z);
         nodeTwoTempPositionTwo = new Vector3(nodeOneInitialPosition.x, nodeTwoTempPositionOne.y, nodeTwoTempPositionOne.z);
 

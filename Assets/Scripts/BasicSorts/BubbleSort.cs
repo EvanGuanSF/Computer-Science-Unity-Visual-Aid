@@ -3,13 +3,20 @@ using UnityEngine;
 
 public class BubbleSort : MonoBehaviour
 {
+    [Header("Node References")]
     public int[] theArray;
     public NodeList theList;
+
+    [Header("Operation Booleans")]
     public bool isUsingManualStepping = true;
     public bool isCoroutineIsActive = false;
     public bool isReadyForInput = false;
     public bool canExecuteStep = false;
+
+    [Header("Array of Node Materials")]
     public Material[] materials = new Material[4];
+
+    [Header("Sorting Options")]
     public float timeBetweenComparisons = 0.25f;
 
     /// <summary>
@@ -101,6 +108,7 @@ public class BubbleSort : MonoBehaviour
                 if (leftNode.GetComponent<Node>().nodeValue > runner.GetComponent<Node>().nodeValue)
                 {
                     yield return new WaitForSeconds(timeBetweenComparisons);
+                    runner.GetComponent<Renderer>().material = materials[4];
 
                     // If on manual mode, flag so that we wait until the animation is done before we accept input for the next step.
                     canExecuteStep = false;
