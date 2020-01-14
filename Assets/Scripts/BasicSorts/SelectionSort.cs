@@ -137,7 +137,7 @@ public class SelectionSort : MonoBehaviour
                 Debug.Log("Selection sort: " + theList.ToString());
 
                 // Wait until the animation has finished to continue the loop.
-                yield return new WaitUntil(() => theList.animationHelper.isLerpSwapping() == false);
+                yield return new WaitUntil(() => theList.swapAnimationHelper.isLerpSwapping() == false);
                 isReadyForInput = true;
 
                 lowestValueNode.GetComponent<Renderer>().material = materials[0];

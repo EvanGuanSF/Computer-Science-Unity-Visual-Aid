@@ -3,19 +3,20 @@
 public class NodeList : MonoBehaviour
 {
     public GameObject nodePrefab;
-    public AnimationHelper animationHelper;
+    public SwapAnimationHelper swapAnimationHelper;
+    public ShiftAnimationHelper shiftAnimationHelper;
 
     private int count;
     private int[] nodeValues;
     private float startingYCoord;
     private TextMesh nodeListName = null;
 
-    private GameObject head;
-    private GameObject tail;
+    public GameObject head;
+    public GameObject tail;
 
     void Start()
     {
-        animationHelper = gameObject.GetComponent<AnimationHelper>();
+        swapAnimationHelper = gameObject.GetComponent<SwapAnimationHelper>();
     }
 
     /// <summary>
@@ -35,7 +36,7 @@ public class NodeList : MonoBehaviour
         {
             newHeadPosition = new Vector3(2 * nodesCreated, startingYCoord, 0);
             GameObject newNode = Instantiate(nodePrefab, newHeadPosition, Quaternion.identity);
-            newNode.transform.parent = this.transform;
+            newNode.transform.parent = transform;
             newNode.GetComponent<Node>().UpdatePositions();
             newNode.GetComponent<Node>().nodeIndex = nodesCreated;
             newNode.GetComponent<Node>().nodeValue = nodeValues[nodesCreated];
@@ -265,7 +266,7 @@ public class NodeList : MonoBehaviour
         GameObject nodeOne = NodeAtIndex(Mathf.Max(NodeAtIndex(nodeOneIndex).GetComponent<Node>().nodeIndex, NodeAtIndex(nodeTwoIndex).GetComponent<Node>().nodeIndex));
         GameObject nodeTwo = NodeAtIndex(Mathf.Min(NodeAtIndex(nodeOneIndex).GetComponent<Node>().nodeIndex, NodeAtIndex(nodeTwoIndex).GetComponent<Node>().nodeIndex));
 
-        animationHelper.FlagLerpSwap(nodeOne, nodeTwo);
+        swapAnimationHelper.FlagLerpSwap(nodeOne, nodeTwo);
     }
 
     /// <summary>
@@ -293,5 +294,117 @@ public class NodeList : MonoBehaviour
         // Update node names.
         nodeOne.GetComponent<Node>().UpdateName();
         nodeTwo.GetComponent<Node>().UpdateName();
+    }
+
+    /// <summary>
+    /// Insert a new node at the given index with given value.
+    /// </summary>
+    /// <param name="newNodeIndex"></param>
+    /// <param name="newNodeValue"></param>
+    public void InsertAtIndex(int newNodeIndex, int newNodeValue)
+    {
+        // return if the index given is out of range.
+        if(newNodeIndex < 0 || newNodeIndex > count)
+        {
+            Debug.Log("Index out of range for insert.");
+            return;
+        }
+
+        Vector3 newHeadPosition = new Vector3(2 * newNodeIndex, startingYCoord, 0);
+        GameObject newNode = Instantiate(nodePrefab, newHeadPosition, Quaternion.identity);
+        newNode.transform.parent = transform;
+        newNode.GetComponent<Node>().UpdatePositions();
+        newNode.GetComponent<Node>().nodeIndex = newNodeIndex;
+        newNode.GetComponent<Node>().nodeValue = newNodeValue;
+        newNode.GetComponent<Node>().UpdateName();
+
+
+        if(head == null)
+        {
+            // If we have an empty list.
+            head = newNode;
+            tail = newNode;
+        }
+
+        if (newNodeIndex == 0)
+        {
+            // If the node is being inserted at the front of the list.
+            head.GetComponent<Node>().prevNode = newNode;
+            newNode.GetComponent<Node>().nextNode = head;
+            head = newNode;
+
+            // Animate node shift.
+            shiftAnimationHelper.FlagNodeShift(newNodeIndex + 1, true);
+        }
+        else if(newNodeIndex == count - 1)
+        {
+            // If the node being inserted is at the back of the list.
+            tail.GetComponent<Node>().nextNode = newNode;
+            newNode.GetComponent<Node>().prevNode = tail;
+            tail = newNode;
+        }
+        else
+        {
+            // General case. Insert between two nodes.
+            GameObject leftNode = NodeAtIndex(newNodeIndex - 1);
+            GameObject rightNode = NodeAtIndex(newNodeIndex + 1);
+
+            if(leftNode != null)
+            {
+                leftNode.GetComponent<Node>().nextNode = newNode;
+            }
+            newNode.GetComponent<Node>().prevNode = leftNode;
+
+            if (rightNode != null)
+            {
+                rightNode.GetComponent<Node>().prevNode = newNode;
+            }
+            newNode.GetComponent<Node>().nextNode = rightNode;
+            
+        }
+
+        // Reposition and reindex the remaining nodes following the new node in the list.
+        for(int i = newNodeIndex + 1; i < count; i++)
+        {
+            NodeAtIndex(i).transform.position = NodeAtIndex(i).transform.position + new Vector3(2, 0 ,0);
+            NodeAtIndex(i).GetComponent<Node>().nodeIndex++;
+        }
+
+        count++;
+    }
+
+    /// <summary>
+    /// Insert an existing node at the index.
+    /// </summary>
+    /// <param name="node"></param>
+    public void InsertAtIndex(GameObject node)
+    {
+
+
+        count++;
+    }
+
+    /// <summary>
+    /// Increments the index by one for the node at given index and every further node.
+    /// </summary>
+    /// <param name="shiftFromIndex"></param>
+    private void ShiftIndices(int shiftFromIndex)
+    {
+        GameObject workingNode = NodeAtIndex(shiftFromIndex);
+
+        if(workingNode = null)
+        {
+            return;
+        }
+
+        while(workingNode != null)
+        {
+            // Update the index and position of the nodes being shifted.
+            workingNode.GetComponent<Node>().nodeIndex++;
+            workingNode.transform.position = workingNode.transform.position + new Vector3(2, 0, 0);
+
+            // Continue the loop.
+            workingNode = workingNode.GetComponent<Node>().nextNode;
+        }
     }
 }

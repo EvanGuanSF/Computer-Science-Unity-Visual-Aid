@@ -127,7 +127,7 @@ public class BubbleSort : MonoBehaviour
                     Debug.Log("Bubble sort: " + theList.ToString());
 
                     // Wait until the animation has finished to continue the loop.
-                    yield return new WaitUntil(() => theList.animationHelper.isLerpSwapping() == false);
+                    yield return new WaitUntil(() => theList.swapAnimationHelper.isLerpSwapping() == false);
                     isReadyForInput = true;
 
                     leftNode.GetComponent<Renderer>().material = materials[0];
