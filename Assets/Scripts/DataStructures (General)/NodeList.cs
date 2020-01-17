@@ -589,4 +589,23 @@ public class NodeList : MonoBehaviour
             workingNode = workingNode.GetComponent<Node>().nextNode;
         }
     }
+
+    /// <summary>
+    /// Clears the list by destroying all nodes and resets properties.
+    /// </summary>
+    public void Clear()
+    {
+        GameObject removeMe = head;
+
+        while(removeMe != null)
+        {
+            head = removeMe.GetComponent<Node>().nextNode;
+            Destroy(removeMe);
+            removeMe = head;
+        }
+
+        head = tail = null;
+        nodeValues = null;
+        count = 0;
+    }
 }

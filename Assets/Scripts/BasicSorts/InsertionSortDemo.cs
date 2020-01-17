@@ -77,6 +77,9 @@ public class InsertionSortDemo : MonoBehaviour
         yield return new WaitUntil(() => gameObject.GetComponent<InsertAnimationHelper>().isLerpInserting() == false &&
             gameObject.GetComponent<ShiftAnimationHelper>().isLerpShifting() == false);
         yield return new WaitForSeconds(1.0f);
+
+        Debug.Log("Clearing list");
+        theSorter.theList.Clear();
     }
 
     private IEnumerator TestTwo()
