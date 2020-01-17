@@ -13,8 +13,8 @@ public class InsertionSortDemo : MonoBehaviour
         timeOfLastInput = Time.time;
         //theSorter.InitializeList();
 
-        //StartCoroutine(TestOne());
-        StartCoroutine(TestTwo());
+        StartCoroutine(TestOne());
+        //StartCoroutine(TestTwo());
 
         //theSorter.theList.AnimatedInsertAtIndex(0, 10);
         //theSorter.AnimatedSort();

@@ -563,6 +563,8 @@ public class NodeList : MonoBehaviour
         {
             Destroy(temp);
         }
+        // Animate node shift.
+        shiftAnimationHelper.FlagNodeShift(nodeIndex, false);
     }
 
     /// <summary>
