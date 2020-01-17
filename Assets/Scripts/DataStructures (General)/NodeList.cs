@@ -373,7 +373,18 @@ public class NodeList : MonoBehaviour
         ShiftIndices(newNodeIndex + 1, 1);
 
         count++;
+    }
 
+    /// <summary>
+    /// Aniamted version of InsertAtIndex(int newNodeIndex, int newNodeValue)
+    /// </summary>
+    /// <param name="newNodeIndex"></param>
+    /// <param name="nodeToMove"></param>
+    public void AnimatedInsertAtIndex(int newNodeIndex, int newNodeValue)
+    {
+        InsertAtIndex(newNodeIndex, newNodeValue);
+
+        // Start the animation to move the node to its final position.
         // Start the animation to reposition and reindex the remaining nodes following the new node in the list.
         shiftAnimationHelper.FlagNodeShift(newNodeIndex + 1, true);
     }
@@ -393,8 +404,6 @@ public class NodeList : MonoBehaviour
         }
 
         nodeToMove.GetComponent<Node>().nodeIndex = newNodeIndex;
-
-        Vector3 newNodeFinalPosition = new Vector3(2 * newNodeIndex, startingYCoord, 0);
         GameObject newNode = nodeToMove;
         newNode.transform.parent = transform;
         newNode.GetComponent<Node>().nodeIndex = newNodeIndex;
@@ -443,8 +452,19 @@ public class NodeList : MonoBehaviour
         ShiftIndices(newNodeIndex + 1, 1);
 
         count++;
+    }
+
+    /// <summary>
+    /// Aniamted version of InsertAtIndex(int newNodeIndex, GameObject nodeToMove)
+    /// </summary>
+    /// <param name="newNodeIndex"></param>
+    /// <param name="nodeToMove"></param>
+    public void AnimatedInsertAtIndex(int newNodeIndex, GameObject nodeToMove)
+    {
+        InsertAtIndex(newNodeIndex, nodeToMove);
 
         // Start the animation to move the node to its final position.
+        Vector3 newNodeFinalPosition = new Vector3(2 * newNodeIndex, startingYCoord, 0);
         insertAnimationHelper.FlagLerpInsertion(nodeToMove, newNodeFinalPosition);
         // Start the animation to reposition and reindex the remaining nodes following the new node in the list.
         shiftAnimationHelper.FlagNodeShift(newNodeIndex + 1, true);
@@ -513,6 +533,20 @@ public class NodeList : MonoBehaviour
 
         count--;
 
+        return nodeToRemove;
+    }
+
+    /// <summary>
+    /// Animated version of RemoveAtIndex.
+    /// </summary>
+    /// <param name="nodeIndex"></param>
+    /// <returns></returns>
+    public GameObject AnimatedRemoveAtIndex(int nodeIndex)
+    {
+        GameObject nodeToRemove = null;
+
+        // Remove the node at the index.
+        RemoveAtIndex(nodeIndex);
         // Animate node shift.
         shiftAnimationHelper.FlagNodeShift(nodeIndex, false);
 
