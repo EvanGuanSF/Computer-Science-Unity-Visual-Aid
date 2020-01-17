@@ -5,7 +5,7 @@ public class SwapAnimationHelper : MonoBehaviour
     public float baseLerpSpeed = 3.0f;
     private float normalizedLerpSpeed;
     private bool isAnimatingSwap = false;
-    private bool isMovingAwayFromVertical = false, isMovingToFinalHorizontal = false, isMovingTowardVertical = false;
+    private bool isMovingAwayFromVertical = false, isMovingToFinalHorizontal = false, isMovingToVertical = false;
     private float lerpDistance;
     private float lerpStartTime;
     GameObject nodeOne, nodeTwo;
@@ -41,16 +41,16 @@ public class SwapAnimationHelper : MonoBehaviour
         nodeOneInitialPosition = new Vector3(nodeOne.transform.position.x, nodeOne.transform.position.y, nodeOne.transform.position.z);
         nodeTwoInitialPosition = new Vector3(nodeTwo.transform.position.x, nodeTwo.transform.position.y, nodeTwo.transform.position.z);
 
-        // Calculate the distance between the objects that will be lerped.
-        // Update the lerp speed to normalize.
-        lerpDistance = (nodeOneInitialPosition - nodeOneTempPositionOne).magnitude;
-        normalizedLerpSpeed = lerpDistance * baseLerpSpeed;
-
         // Set the positions of the checkpoints that will be used.
         nodeOneTempPositionOne = new Vector3(nodeOneInitialPosition.x, nodeOneInitialPosition.y + 1.25f, nodeOneInitialPosition.z);
         nodeTwoTempPositionOne = new Vector3(nodeTwoInitialPosition.x, nodeTwoInitialPosition.y - 1.25f, nodeTwoInitialPosition.z);
         nodeOneTempPositionTwo = new Vector3(nodeTwoInitialPosition.x, nodeOneTempPositionOne.y, nodeOneTempPositionOne.z);
         nodeTwoTempPositionTwo = new Vector3(nodeOneInitialPosition.x, nodeTwoTempPositionOne.y, nodeTwoTempPositionOne.z);
+
+        // Calculate the distance between the objects that will be lerped.
+        // Update the lerp speed to normalize.
+        lerpDistance = (nodeOneInitialPosition - nodeOneTempPositionOne).magnitude;
+        normalizedLerpSpeed = lerpDistance * baseLerpSpeed;
 
         isMovingAwayFromVertical = true;
         isAnimatingSwap = true;
@@ -135,11 +135,11 @@ public class SwapAnimationHelper : MonoBehaviour
                 nodeOne.transform.position = nodeOneTempPositionTwo;
                 nodeTwo.transform.position = nodeTwoTempPositionTwo;
 
-                isMovingTowardVertical = true;
+                isMovingToVertical = true;
                 isMovingToFinalHorizontal = false;
             }
         }
-        else if (isMovingTowardVertical)
+        else if (isMovingToVertical)
         {
             // Distance moved equals elapsed time times speed..
             float distCovered = (Time.time - lerpStartTime) * normalizedLerpSpeed;
@@ -169,7 +169,7 @@ public class SwapAnimationHelper : MonoBehaviour
                 nodeOne.transform.position = nodeTwoInitialPosition;
                 nodeTwo.transform.position = nodeOneInitialPosition;
 
-                isMovingTowardVertical = false;
+                isMovingToVertical = false;
             }
         }
         else
@@ -178,7 +178,7 @@ public class SwapAnimationHelper : MonoBehaviour
             // Flag and reset variables when we finish lerping.
             isAnimatingSwap = false;
             nodeOne = nodeTwo = null;
-            isMovingAwayFromVertical = isMovingToFinalHorizontal = isMovingTowardVertical = false;
+            isMovingAwayFromVertical = isMovingToFinalHorizontal = isMovingToVertical = false;
             nodeOneInitialPosition = nodeTwoInitialPosition = Vector3.zero;
             nodeOneTempPositionOne = nodeOneTempPositionTwo = Vector3.zero;
             nodeTwoTempPositionOne = nodeTwoTempPositionTwo = Vector3.zero;

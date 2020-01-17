@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class SelectionSort : MonoBehaviour
+public class InsertionSort : MonoBehaviour
 {
     [Header("Node References")]
     public int[] theArray;

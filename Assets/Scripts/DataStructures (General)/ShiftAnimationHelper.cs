@@ -2,7 +2,7 @@
 
 public class ShiftAnimationHelper : MonoBehaviour
 {
-    public float baseLerpSpeed = 3.0f;
+    public float baseLerpSpeed = 1.0f;
     public float nodeShiftDistance = 2.0f;
     private float normalizedLerpSpeed;
     private bool isAnimatingShift = false;
@@ -31,15 +31,20 @@ public class ShiftAnimationHelper : MonoBehaviour
     /// <param name="flagShiftRight"></param>
     public void FlagNodeShift(int shiftFromIndex, bool flagShiftRight)
     {
-        float xOffset = flagShiftRight == true ? 2.0f : -2.0f;
+        if(shiftFromIndex >= gameObject.GetComponent<NodeList>().Count())
+        {
+            return;
+        }
+
+        float xOffset = flagShiftRight == true ? nodeShiftDistance : -nodeShiftDistance;
 
         // Get the starting position and set the ending position.
         startNode = gameObject.GetComponent<NodeList>().NodeAtIndex(shiftFromIndex);
         shiftNodeStartPosition = startNode.transform.position;
-        shiftNodeEndPosition = shiftNodeStartPosition + new Vector3(nodeShiftDistance, 0, 0);
-
+        shiftNodeEndPosition = shiftNodeStartPosition + new Vector3(xOffset, 0, 0);
+        
         lerpStartTime = Time.time;
-        lerpDistance = nodeShiftDistance;
+        lerpDistance = (shiftNodeStartPosition - shiftNodeEndPosition).magnitude;
         normalizedLerpSpeed = lerpDistance * baseLerpSpeed;
 
         isAnimatingShift = true;
@@ -51,26 +56,23 @@ public class ShiftAnimationHelper : MonoBehaviour
     /// </summary>
     private void HandleLerpShift()
     {
-        if (startNode.transform.position.x < shiftNodeEndPosition.x)
+        // Distance moved equals elapsed time times speed..
+        float distCovered = (Time.time - lerpStartTime) * normalizedLerpSpeed;
+
+        // Fraction of journey completed equals current distance divided by total distance.
+        float fractionOfJourney = distCovered / lerpDistance;
+
+        if (fractionOfJourney < 1.0f)
         {
-            // Distance moved equals elapsed time times speed..
-            float distCovered = (Time.time - lerpStartTime) * normalizedLerpSpeed;
-
-            // Fraction of journey completed equals current distance divided by total distance.
-            float fractionOfJourney = distCovered / lerpDistance;
-
-            // Calculate the distance along x to move all of the objects.
-            float distanceToMove = Mathf.Lerp(startNode.transform.position.x,
-                shiftNodeEndPosition.y,
-                shiftNodeEndPosition.z);
+            //Debug.Log(fractionOfJourney + " || " + distCovered + " || " + lerpDistance);
 
             // Move all the nodes by the same amount.
-            GameObject workingNode = startNode;
+            startNode.transform.position = Vector3.Lerp(shiftNodeStartPosition, shiftNodeEndPosition, fractionOfJourney);
+
+            GameObject workingNode = startNode.GetComponent<Node>().nextNode;
             while (workingNode != null)
             {
-                workingNode.transform.position = new Vector3(workingNode.transform.position.x + distanceToMove,
-                    workingNode.transform.position.y,
-                    workingNode.transform.position.z);
+                workingNode.transform.position = workingNode.GetComponent<Node>().prevNode.transform.position + new Vector3(2.0f, 0, 0);
 
                 workingNode = workingNode.GetComponent<Node>().nextNode;
             }
@@ -81,11 +83,15 @@ public class ShiftAnimationHelper : MonoBehaviour
 
             // Manually adjust the positions of the nodes for the final step for consistency.
             GameObject workingNode = startNode;
-            while(workingNode != null)
+            while (workingNode != null)
             {
-                workingNode.transform.position = new Vector3(Mathf.Round(workingNode.transform.position.x),
-                    workingNode.transform.position.y,
-                    workingNode.transform.position.z);
+                //Debug.Log(workingNode.GetComponent<Node>().nodeValue + " Pre-Final pos: " + workingNode.transform.position);
+
+                workingNode.transform.position = new Vector3(workingNode.GetComponent<Node>().nodeIndex * 2,
+                    startNode.transform.position.y,
+                    startNode.transform.position.z);
+
+                //Debug.Log(workingNode.GetComponent<Node>().nodeValue + " Final pos: " + workingNode.transform.position);
 
                 workingNode = workingNode.GetComponent<Node>().nextNode;
             }

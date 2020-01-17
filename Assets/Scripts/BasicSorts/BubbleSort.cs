@@ -14,7 +14,7 @@ public class BubbleSort : MonoBehaviour
     public bool canExecuteStep = false;
 
     [Header("Array of Node Materials")]
-    public Material[] materials = new Material[4];
+    public Material[] materials = new Material[5];
 
     [Header("Sorting Options")]
     public float timeBetweenComparisons = 0.25f;

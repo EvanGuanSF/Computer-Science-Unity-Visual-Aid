@@ -5,6 +5,7 @@ public class SelectionSortDemo : MonoBehaviour
     public float secondsBetweenInputs = 0.2f;
     private float timeOfLastInput = 0.0f;
     public SelectionSort theSorter;
+    public GameObject nodePrefab;
 
     private void Start()
     {
