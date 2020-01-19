@@ -69,7 +69,7 @@ public class NodeList : MonoBehaviour
         try
         {
             nodeListName = gameObject.GetComponentInChildren<TextMesh>();
-            nodeListName.transform.position = new Vector3(count, startingYCoord + 3f, 0.0f);
+            nodeListName.transform.localPosition = new Vector3(0, 2.5f, 0.0f);
         }
         catch
         {

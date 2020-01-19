@@ -14,6 +14,6 @@ Inputs:
  - 'Space' and 'LeftMouseButton' to execute the next swap in the algorithm
 
 
-### TODO (Updated Jan 12, 2020):
- - Upgrade to a newer version of Unity to utilize more up-to-date GUI features to add proper in-simulation text and value updates.
- - Add legend for Node textures.
+### TODO (Updated Jan 18, 2020):
+- Modify legends to be popups and be customized on a per-algorithm basis.
+- Modify camera so that it can expand and contract to see all active elements.
