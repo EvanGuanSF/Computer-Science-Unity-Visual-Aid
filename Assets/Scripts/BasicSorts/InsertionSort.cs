@@ -27,6 +27,7 @@ public class InsertionSort : MonoBehaviour
         if (theList != null)
         {
             theList.InitializeWithArray(theArray);
+            isReadyForInput = true;
         }
     }
 
@@ -35,34 +36,51 @@ public class InsertionSort : MonoBehaviour
     /// </summary>
     public void Sort()
     {
-        GameObject runner = null, lowestValueNode = null;
-        int currentLowestValue = int.MaxValue;
+        GameObject runner = null, currentNode = null;
+        int currentNodeValue = int.MaxValue;
 
         // Execute the sorting algorithm. O(n^2)
         for (int i = 0; i < theList.Count(); i++)
         {
-            currentLowestValue = theList.GetComponent<NodeList>().NodeAtIndex(i).GetComponent<Node>().nodeValue;
-            for (int j = i + 1; j < theList.Count(); j++)
-            {
-                runner = theList.GetComponent<NodeList>().NodeAtIndex(j);
+            // Current node = theList[i]
+            currentNode = theList.GetComponent<NodeList>().NodeAtIndex(i);
+            currentNodeValue = currentNode.GetComponent<Node>().nodeValue;
+            // Runner node = theList[i - 1]
+            runner = currentNode.GetComponent<Node>().prevNode;
 
-                if (runner.GetComponent<Node>().nodeValue < currentLowestValue)
+            while (runner != null)
+            {
+                if (currentNodeValue < runner.GetComponent<Node>().nodeValue)
                 {
-                    lowestValueNode = runner;
-                    currentLowestValue = runner.GetComponent<Node>().nodeValue;
+                    // If the current node's value is less than the runner;s, then we keep going.
+                    // runnerNode = theList[runnerNode.Index - 1]
+                    runner = runner.GetComponent<Node>().prevNode;
                 }
+                else
+                {
+                    // If the current node's value is greater than the runner's,
+                    // remove the node and place it at the index after the runner's.
+                    theList.RemoveAtIndex(i);
+                    theList.InsertAtIndex(runner.GetComponent<Node>().nodeIndex + 1, currentNode);
+
+                    break;
+                }
+
             }
 
-            // If the temp node was assigned a reference, then we need to swap.
-            if (lowestValueNode != null)
+            // If we get here, then that means the current value is the smallest in the sorted list.
+            // Insert at the head.
+            if (runner == null)
             {
-                int swapIndex = lowestValueNode.GetComponent<Node>().nodeIndex;
-                theList.Swap(i, swapIndex);
-                Debug.Log("Selection sort: " + theList.ToString());
+                currentNode = theList.RemoveAtIndex(i);
+                theList.InsertAtIndex(0, currentNode);
             }
 
             // Reset temp variables.
-            lowestValueNode = null;
+            currentNode = runner = null;
+            currentNodeValue = int.MaxValue;
+
+            Debug.Log("Insertion sort: " + theList.ToString());
         }
     }
 
@@ -84,39 +102,85 @@ public class InsertionSort : MonoBehaviour
     /// <returns></returns>
     private IEnumerator AnimatedSortCoroutine()
     {
-        GameObject runner = null, lowestValueNode = null, initialNode = null;
-        int numSwaps = 0;
+        GameObject runner = null, currentNode = null;
+        int currentNodeValue = int.MaxValue;
+        int comparisonCount = 0;
 
         // Execute the sorting algorithm. O(n^2)
-        for (int i = 0; i < theList.Count() - 1; i++)
+        for (int i = 0; i < theList.Count(); i++)
         {
-            yield return new WaitForSeconds(timeBetweenComparisons);
-            initialNode = lowestValueNode = theList.GetComponent<NodeList>().NodeAtIndex(i);
-            lowestValueNode.GetComponent<Renderer>().material = materials[1];
+            // Current node = theList[i]
+            currentNode = theList.GetComponent<NodeList>().NodeAtIndex(i);
+            currentNodeValue = currentNode.GetComponent<Node>().nodeValue;
+            // Runner node = theList[i - 1]
+            runner = currentNode.GetComponent<Node>().prevNode;
 
-            for (int j = i + 1; j < theList.Count(); j++)
+            yield return new WaitForSeconds(timeBetweenComparisons);
+            currentNode.GetComponent<Renderer>().material = materials[1];
+
+            while (runner != null)
             {
                 yield return new WaitForSeconds(timeBetweenComparisons);
-                runner = theList.GetComponent<NodeList>().NodeAtIndex(j);
                 runner.GetComponent<Renderer>().material = materials[2];
 
-                yield return new WaitForSeconds(timeBetweenComparisons);
-                if (runner.GetComponent<Node>().nodeValue < lowestValueNode.GetComponent<Node>().nodeValue)
+                if (currentNodeValue < runner.GetComponent<Node>().nodeValue)
                 {
-                    lowestValueNode.GetComponent<Renderer>().material = materials[0];
-                    initialNode.GetComponent<Renderer>().material = materials[4];
-                    lowestValueNode = runner;
-                    lowestValueNode.GetComponent<Renderer>().material = materials[1];
+                    yield return new WaitForSeconds(timeBetweenComparisons);
+                    runner.GetComponent<Renderer>().material = materials[3];
+
+                    // If the current node's value is less than the runner;s, then we keep going.
+                    // runnerNode = theList[runnerNode.Index - 1]
+                    runner = runner.GetComponent<Node>().prevNode;
                 }
                 else
                 {
-                    runner.GetComponent<Renderer>().material = materials[0];
+                    runner.GetComponent<Renderer>().material = materials[4];
+                    yield return new WaitForSeconds(timeBetweenComparisons);
+
+                    // If on manual mode, flag so that we wait until the animation is done before we accept input for the next step.
+                    canExecuteStep = false;
+
+                    // If we are using manual stepping, wait until we get input to execute before executing swaps.
+                    if (isUsingManualStepping && !canExecuteStep)
+                    {
+                        yield return new WaitUntil(() => canExecuteStep == true);
+                        canExecuteStep = false;
+                    }
+                    isReadyForInput = false;
+
+                    // If the current node's value is greater than the runner's,
+                    // remove the node and place it at the index after the runner's.
+                    if (currentNode.GetComponent<Node>().nodeIndex - 1 != runner.GetComponent<Node>().nodeIndex)
+                    {
+                        // Only perform the animated removal and insert if the element being inserted needs to be moved.
+                        theList.AnimatedRemoveAtIndex(i);
+                        theList.AnimatedInsertAtIndex(runner.GetComponent<Node>().nodeIndex + 1, currentNode);
+                    }
+                    else
+                    {
+                        theList.RemoveAtIndex(i);
+                        theList.InsertAtIndex(runner.GetComponent<Node>().nodeIndex + 1, currentNode);
+                    }
+
+                    // Wait for any active animations to finish.
+                    yield return new WaitUntil(() => theList.shiftAnimationHelper.isLerpShifting() == false);
+                    yield return new WaitUntil(() => theList.insertAnimationHelper.isLerpInserting() == false);
+                    isReadyForInput = true;
+
+                    runner.GetComponent<Renderer>().material = materials[3];
+
+                    break;
                 }
+
+                comparisonCount++;
             }
 
-            // If the lowest value node has a different index than the index i, then we need to swap.
-            if (lowestValueNode.GetComponent<Node>().nodeIndex != i)
+            // If we get here, then that means the current value is the smallest in the sorted list.
+            // Insert at the head.
+            if (runner == null)
             {
+                GameObject tempNode = theList.GetComponent<NodeList>().NodeAtIndex(0);
+                tempNode.GetComponent<Renderer>().material = materials[4];
                 yield return new WaitForSeconds(timeBetweenComparisons);
 
                 // If on manual mode, flag so that we wait until the animation is done before we accept input for the next step.
@@ -130,35 +194,49 @@ public class InsertionSort : MonoBehaviour
                 }
                 isReadyForInput = false;
 
-                // Send the signal to swap and animate the Nodes.
-                numSwaps++;
-                int swapIndex = lowestValueNode.GetComponent<Node>().nodeIndex;
-                theList.AnimatedSwap(i, swapIndex);
-                Debug.Log("Selection sort: " + theList.ToString());
+                if (i != 0)
+                {
+                    // Only perform the animated removal and insert if the element being inserted isn't the first element being sorted.
+                    currentNode = theList.AnimatedRemoveAtIndex(i);
+                    theList.AnimatedInsertAtIndex(0, currentNode);
+                }
+                else
+                {
+                    currentNode = theList.RemoveAtIndex(i);
+                    theList.InsertAtIndex(0, currentNode);
+                }
 
-                // Wait until the animation has finished to continue the loop.
-                yield return new WaitUntil(() => theList.swapAnimationHelper.isLerpSwapping() == false);
+                // Wait for any active animations to finish.
+                yield return new WaitUntil(() => theList.insertAnimationHelper.isLerpInserting() == false);
+                yield return new WaitUntil(() => theList.shiftAnimationHelper.isLerpShifting() == false);
                 isReadyForInput = true;
 
-                lowestValueNode.GetComponent<Renderer>().material = materials[0];
-                initialNode.GetComponent<Renderer>().material = materials[0];
+                tempNode.GetComponent<Renderer>().material = materials[3];
+                currentNode.GetComponent<Renderer>().material = materials[3];
             }
-            // Change the material to indicate sorting has finished.
-            runner.GetComponent<Renderer>().material = materials[0];
-            theList.GetComponent<NodeList>().NodeAtIndex(i).GetComponent<Renderer>().material = materials[3];
+            else
+            {
+                currentNode.GetComponent<Renderer>().material = materials[3];
+            }
+
+            // Reset temp variables.
+            currentNode = runner = null;
+            currentNodeValue = int.MaxValue;
+
+            //Debug.Log("Insertion sort: " + theList.ToString());
         }
 
         // Change the material to indicate sorting has finished.
         theList.GetComponent<NodeList>().NodeAtIndex(theList.Count() - 1).GetComponent<Renderer>().material = materials[3];
 
-        Debug.Log("Selection sort swaps: " + numSwaps);
+        Debug.Log("Insertion sort comparisons: " + comparisonCount);
 
         isCoroutineIsActive = false;
     }
 
     public void ExecuteSortStep()
     {
-        if (isUsingManualStepping && !canExecuteStep)
+        if (isUsingManualStepping && isReadyForInput)
         {
             canExecuteStep = true;
         }

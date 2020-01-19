@@ -11,13 +11,24 @@ public class InsertionSortDemo : MonoBehaviour
     private void Start()
     {
         timeOfLastInput = Time.time;
-        //theSorter.InitializeList();
 
-        StartCoroutine(TestOne());
+        //StartCoroutine(TestOne());
         //StartCoroutine(TestTwo());
 
         //theSorter.theList.AnimatedInsertAtIndex(0, 10);
         //theSorter.AnimatedSort();
+
+        theSorter.InitializeList();
+        theSorter.AnimatedSort();
+        //theSorter.Sort();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0) && timeOfLastInput + secondsBetweenInputs < Time.time)
+        {
+            theSorter.ExecuteSortStep();
+        }
     }
 
     private IEnumerator TestOne()
@@ -78,8 +89,15 @@ public class InsertionSortDemo : MonoBehaviour
             gameObject.GetComponent<ShiftAnimationHelper>().isLerpShifting() == false);
         yield return new WaitForSeconds(1.0f);
 
-        Debug.Log("Clearing list");
-        theSorter.theList.Clear();
+        Debug.Log("Inserting 13 to index 8.");
+        theSorter.theList.InsertAtIndex(8, 13);
+
+        yield return new WaitUntil(() => gameObject.GetComponent<InsertAnimationHelper>().isLerpInserting() == false &&
+            gameObject.GetComponent<ShiftAnimationHelper>().isLerpShifting() == false);
+        yield return new WaitForSeconds(1.0f);
+
+        //Debug.Log("Clearing list");
+        //theSorter.theList.Clear();
     }
 
     private IEnumerator TestTwo()
@@ -140,13 +158,5 @@ public class InsertionSortDemo : MonoBehaviour
         yield return new WaitUntil(() => gameObject.GetComponent<InsertAnimationHelper>().isLerpInserting() == false &&
             gameObject.GetComponent<ShiftAnimationHelper>().isLerpShifting() == false);
         yield return new WaitForSeconds(1.0f);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0) && timeOfLastInput + secondsBetweenInputs < Time.time)
-        {
-            theSorter.ExecuteSortStep();
-        }
     }
 }

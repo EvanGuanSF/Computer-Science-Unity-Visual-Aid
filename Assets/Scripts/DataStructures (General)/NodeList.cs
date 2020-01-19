@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class NodeList : MonoBehaviour
 {
@@ -8,7 +7,7 @@ public class NodeList : MonoBehaviour
     public ShiftAnimationHelper shiftAnimationHelper;
     public InsertAnimationHelper insertAnimationHelper;
 
-    private int count;
+    public int count;
     private int[] nodeValues;
     private float startingYCoord;
     private TextMesh nodeListName = null;
@@ -32,7 +31,7 @@ public class NodeList : MonoBehaviour
         nodeValues = newValuesArray;
         startingYCoord = transform.position.y;
 
-        if(nodeValues == null)
+        if (nodeValues == null)
         {
             head = tail = null;
             return;
@@ -102,9 +101,40 @@ public class NodeList : MonoBehaviour
             return "";
         }
 
-        for (int i = 0; i < count; i++)
+        GameObject node = NodeAtIndex(0);
+
+        int overflowCheck = 0;
+        while (node != null && overflowCheck <= count)
         {
-            output += ValueAtIndex(i) + " ";
+            output += node.GetComponent<Node>().nodeValue + " ";
+            overflowCheck++;
+            node = node.GetComponent<Node>().nextNode;
+        }
+
+        output.Trim();
+
+        return output;
+    }
+
+
+    public string ReverseToString()
+    {
+        string output = "";
+
+        if (head == null)
+        {
+            Debug.Log("No elements in NodeList.");
+            return "";
+        }
+
+        GameObject node = NodeAtIndex(count - 1);
+
+        int overflowCheck = 0;
+        while (node != null && overflowCheck <= count)
+        {
+            output += node.GetComponent<Node>().nodeValue + " ";
+            overflowCheck++;
+            node = node.GetComponent<Node>().prevNode;
         }
 
         output.Trim();
@@ -421,13 +451,6 @@ public class NodeList : MonoBehaviour
             newNode.GetComponent<Node>().nextNode = head;
             head = newNode;
         }
-        else if (newNodeIndex == count - 1)
-        {
-            // If the node being inserted is at the back of the list.
-            tail.GetComponent<Node>().nextNode = newNode;
-            newNode.GetComponent<Node>().prevNode = tail;
-            tail = newNode;
-        }
         else
         {
             // General case. Insert between two nodes.
@@ -448,6 +471,12 @@ public class NodeList : MonoBehaviour
 
         }
 
+        // Update tail if needed.
+        if (newNodeIndex == count - 1)
+        {
+            tail = newNode;
+        }
+
         // Update the indices of the remaining nodes.
         ShiftIndices(newNodeIndex + 1, 1);
 
@@ -465,7 +494,11 @@ public class NodeList : MonoBehaviour
 
         // Start the animation to move the node to its final position.
         Vector3 newNodeFinalPosition = new Vector3(2 * newNodeIndex, startingYCoord, 0);
-        insertAnimationHelper.FlagLerpInsertion(nodeToMove, newNodeFinalPosition);
+
+        if (nodeToMove.transform.position != newNodeFinalPosition)
+        {
+            insertAnimationHelper.FlagLerpInsertion(nodeToMove, newNodeFinalPosition);
+        }
         // Start the animation to reposition and reindex the remaining nodes following the new node in the list.
         shiftAnimationHelper.FlagNodeShift(newNodeIndex + 1, true);
     }
@@ -490,7 +523,7 @@ public class NodeList : MonoBehaviour
         {
             // If the node is being removed from the front of the list.
             head = nodeToRemove.GetComponent<Node>().nextNode;
-            if(head != null)
+            if (head != null)
             {
                 head.GetComponent<Node>().prevNode = null;
             }
@@ -546,7 +579,7 @@ public class NodeList : MonoBehaviour
         GameObject nodeToRemove = null;
 
         // Remove the node at the index.
-        RemoveAtIndex(nodeIndex);
+        nodeToRemove = RemoveAtIndex(nodeIndex);
         // Animate node shift.
         shiftAnimationHelper.FlagNodeShift(nodeIndex, false);
 
@@ -559,7 +592,7 @@ public class NodeList : MonoBehaviour
     public void DeleteAtIndex(int nodeIndex)
     {
         GameObject temp = RemoveAtIndex(nodeIndex);
-        if(temp != null)
+        if (temp != null)
         {
             Destroy(temp);
         }
@@ -597,7 +630,7 @@ public class NodeList : MonoBehaviour
     {
         GameObject removeMe = head;
 
-        while(removeMe != null)
+        while (removeMe != null)
         {
             head = removeMe.GetComponent<Node>().nextNode;
             Destroy(removeMe);

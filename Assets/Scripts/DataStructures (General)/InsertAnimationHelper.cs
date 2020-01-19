@@ -5,7 +5,7 @@ public class InsertAnimationHelper : MonoBehaviour
     public float baseLerpSpeed = 2.0f;
     private float normalizedLerpSpeed;
     private bool isAnimatingInsertion = false;
-    private bool isMovingAwayFromVertical = false, isMovingToFinalHorizontal = false, isMovingToVertical = false;
+    public bool isMovingAwayFromVertical = false, isMovingToFinalHorizontal = false, isMovingToVertical = false;
     private float lerpDistance;
     private float lerpStartTime;
     private GameObject nodeToMove;
@@ -92,6 +92,13 @@ public class InsertAnimationHelper : MonoBehaviour
         }
         else if (isMovingToFinalHorizontal)
         {
+            // Wait for the node shift animation to finish if needed.
+            if(gameObject.GetComponent<ShiftAnimationHelper>() != null && gameObject.GetComponent<ShiftAnimationHelper>().isLerpShifting())
+            {
+                lerpStartTime = Time.time;
+                return;
+            }
+
             // Distance moved equals elapsed time times speed.
             float distCovered = (Time.time - lerpStartTime) * normalizedLerpSpeed;
 
@@ -124,6 +131,13 @@ public class InsertAnimationHelper : MonoBehaviour
         }
         else if (isMovingToVertical)
         {
+            // Wait for the node shift animation to finish if needed.
+            if (gameObject.GetComponent<ShiftAnimationHelper>() != null && gameObject.GetComponent<ShiftAnimationHelper>().isLerpShifting())
+            {
+                lerpStartTime = Time.time;
+                return;
+            }
+
             // Distance moved equals elapsed time times speed..
             float distCovered = (Time.time - lerpStartTime) * normalizedLerpSpeed;
 

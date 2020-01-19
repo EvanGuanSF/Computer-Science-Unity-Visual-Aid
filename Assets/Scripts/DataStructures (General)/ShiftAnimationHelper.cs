@@ -2,11 +2,10 @@
 
 public class ShiftAnimationHelper : MonoBehaviour
 {
-    public float baseLerpSpeed = 1.0f;
+    public float baseLerpSpeed = 2.0f;
     public float nodeShiftDistance = 2.0f;
     private float normalizedLerpSpeed;
     private bool isAnimatingShift = false;
-    private bool isShiftingNodePosition = false;
     private float lerpDistance;
     private float lerpStartTime;
     private GameObject startNode;
@@ -31,7 +30,7 @@ public class ShiftAnimationHelper : MonoBehaviour
     /// <param name="flagShiftRight"></param>
     public void FlagNodeShift(int shiftFromIndex, bool flagShiftRight)
     {
-        if(shiftFromIndex >= gameObject.GetComponent<NodeList>().Count())
+        if (shiftFromIndex >= gameObject.GetComponent<NodeList>().Count())
         {
             return;
         }
@@ -42,13 +41,12 @@ public class ShiftAnimationHelper : MonoBehaviour
         startNode = gameObject.GetComponent<NodeList>().NodeAtIndex(shiftFromIndex);
         shiftNodeStartPosition = startNode.transform.position;
         shiftNodeEndPosition = shiftNodeStartPosition + new Vector3(xOffset, 0, 0);
-        
+
         lerpStartTime = Time.time;
         lerpDistance = (shiftNodeStartPosition - shiftNodeEndPosition).magnitude;
         normalizedLerpSpeed = lerpDistance * baseLerpSpeed;
 
         isAnimatingShift = true;
-        isShiftingNodePosition = true;
     }
 
     /// <summary>
@@ -56,6 +54,13 @@ public class ShiftAnimationHelper : MonoBehaviour
     /// </summary>
     private void HandleLerpShift()
     {
+        // Wait for the node shift animation to finish if needed.
+        if (gameObject.GetComponent<InsertAnimationHelper>() != null && gameObject.GetComponent<InsertAnimationHelper>().isMovingAwayFromVertical)
+        {
+            lerpStartTime = Time.time;
+            return;
+        }
+
         // Distance moved equals elapsed time times speed..
         float distCovered = (Time.time - lerpStartTime) * normalizedLerpSpeed;
 

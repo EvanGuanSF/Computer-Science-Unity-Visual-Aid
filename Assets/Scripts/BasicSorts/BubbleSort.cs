@@ -27,6 +27,7 @@ public class BubbleSort : MonoBehaviour
         if (theList != null)
         {
             theList.InitializeWithArray(theArray);
+            isReadyForInput = true;
         }
     }
 
@@ -37,7 +38,7 @@ public class BubbleSort : MonoBehaviour
     {
         GameObject runner = null, leftNode = null;
 
-        if(theList.Count() < 2)
+        if (theList.Count() < 2)
         {
             return;
         }
@@ -50,7 +51,7 @@ public class BubbleSort : MonoBehaviour
             for (int j = 1; j <= i; j++)
             {
                 runner = theList.GetComponent<NodeList>().NodeAtIndex(j);
-                
+
                 // Bubble sort swaps on every instance of i+1 > i.
                 if (leftNode.GetComponent<Node>().nodeValue > runner.GetComponent<Node>().nodeValue)
                 {
@@ -85,7 +86,7 @@ public class BubbleSort : MonoBehaviour
     private IEnumerator AnimatedSortCoroutine()
     {
         GameObject runner = null, leftNode = null;
-        int numSwaps = 0;
+        int comparisonCount = 0;
 
         if (theList.Count() < 2)
         {
@@ -100,6 +101,8 @@ public class BubbleSort : MonoBehaviour
 
             for (int j = 1; j <= i; j++)
             {
+                comparisonCount++;
+
                 runner = theList.GetComponent<NodeList>().NodeAtIndex(j);
                 leftNode.GetComponent<Renderer>().material = materials[1];
                 runner.GetComponent<Renderer>().material = materials[2];
@@ -122,9 +125,8 @@ public class BubbleSort : MonoBehaviour
                     isReadyForInput = false;
 
                     // Send the signal to swap and animate the Nodes.
-                    numSwaps++;
                     theList.AnimatedSwap(leftNode.GetComponent<Node>().nodeIndex, runner.GetComponent<Node>().nodeIndex);
-                    Debug.Log("Bubble sort: " + theList.ToString());
+                    //Debug.Log("Bubble sort: " + theList.ToString());
 
                     // Wait until the animation has finished to continue the loop.
                     yield return new WaitUntil(() => theList.swapAnimationHelper.isLerpSwapping() == false);
@@ -133,7 +135,7 @@ public class BubbleSort : MonoBehaviour
                     leftNode.GetComponent<Renderer>().material = materials[0];
                     runner.GetComponent<Renderer>().material = materials[0];
                 }
-                
+
                 yield return new WaitForSeconds(timeBetweenComparisons);
                 leftNode.GetComponent<Renderer>().material = materials[0];
                 leftNode = theList.GetComponent<NodeList>().NodeAtIndex(j);
@@ -150,14 +152,14 @@ public class BubbleSort : MonoBehaviour
         // Change the material to indicate sorting has finished.
         theList.GetComponent<NodeList>().NodeAtIndex(0).GetComponent<Renderer>().material = materials[3];
 
-        Debug.Log("Bubble sort swaps: " + numSwaps);
+        Debug.Log("Bubble sort comparisons: " + comparisonCount);
 
         isCoroutineIsActive = false;
     }
 
     public void ExecuteSortStep()
     {
-        if (isUsingManualStepping && !canExecuteStep)
+        if (isUsingManualStepping && isReadyForInput)
         {
             canExecuteStep = true;
         }
